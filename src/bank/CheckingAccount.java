@@ -15,7 +15,7 @@ public class CheckingAccount extends AbstractAccount {
    */
   public CheckingAccount(double starterAmount) throws IllegalArgumentException {
     super(starterAmount);
-    this.balanceFellBelowMinimum = false;
+    this.balanceFellBelowMinimum = starterAmount < CHECKING_MIN_BALANCE;
   }
 
   /**
@@ -35,9 +35,24 @@ public class CheckingAccount extends AbstractAccount {
   }
 
   /**
+   * Deposits the specified amount into the account.
+   * Overridden to check if the balance is below minimum before deposit.
+   *
+   * @param amount The amount to deposit.
+   * @throws IllegalArgumentException if the amount is negative.
+   */
+  @Override
+  public void deposit(double amount) throws IllegalArgumentException {
+    if (balance < CHECKING_MIN_BALANCE) {
+      balanceFellBelowMinimum = true;
+    }
+    super.deposit(amount);
+  }
+
+  /**
    * Performs monthly maintenance on the checking account.
    * If the balance fell below the minimum required balance at any time during the month,
-   * a maintenance fee is charged.
+   * a single maintenance fee of $5 is charged.
    */
   @Override
   public void performMonthlyMaintenance() {
